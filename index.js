@@ -52,7 +52,7 @@ const cors = require('cors');
 // const cookieParser = require('cookie-parser')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
-const port = process.env.PORT || 6000;
+const port = process.env.PORT || 5000;
 const app = express();
 const corsOptions = {
   origin: [
@@ -92,6 +92,15 @@ async function run() {
       const cursor = roomsCollection.find();
       const result = await cursor.toArray();
       res.send(result)
+    })
+
+    app.get('/rooms/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await roomsCollection.findOne(query)
+      // console.log(result)
+      res.send(result)
+
     })
 
     // Connect the client to the server	(optional starting in v4.7)
