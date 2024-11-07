@@ -94,6 +94,33 @@ async function run() {
       res.send(result)
     })
 
+    app.put('/rooms/:bookingId', async (req, res) => {
+      const id = req.params.bookingId;
+      console.log(id);
+      const filter = { _id: new ObjectId(id) };
+      const updateData = {
+        $set: {
+          availability: 'unAvailable', 
+        }
+      };
+      const result = await roomsCollection.updateOne(filter, updateData);
+      console.log(result);
+      res.send(result)
+      // try {
+      //   const result = await roomsCollection.updateOne(filter, updateData);
+      //   console.log(result);
+      //   if (result.modifiedCount === 1) {
+      //     res.status(200).json({ message: "Update successful" });
+      //   } else {
+      //     res.status(404).json({ message: "Document not found or no modifications made" });
+      //   }
+      // } catch (error) {
+      //   console.error("Error updating document:", error);
+      //   res.status(500).json({ error: "Internal server error" });
+      // }
+    });
+
+
     app.get('/rooms/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) }
@@ -101,6 +128,19 @@ async function run() {
       // console.log(result)
       res.send(result)
 
+    })
+    
+    app.post('/booking', async (req, res) => {
+      const newProduct = req.body;
+      console.log(newProduct);
+      const result = await bookingCollection.insertOne(newProduct)
+
+      res.send(result)
+    })
+    app.get('/myBooking/:email', async (req, res) => {
+      console.log(req.params.email);
+      const result = await bookingCollection.find({ email: req.params.email }).toArray();
+      res.send(result)
     })
 
     
