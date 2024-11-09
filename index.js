@@ -154,13 +154,13 @@ async function run() {
       const id = req.params.id;
       const BookData = req.body
       const query = { _id: new ObjectId(id) }
-      const options = { upsert: true }
-      const updateDoc = {
+      const alter = { upsert: true }
+      const updateData = {
         $set: {
           ...BookData,
         },
       }
-      const result = await roomsCollection.updateOne(query, updateDoc, options)
+      const result = await roomsCollection.updateOne(query, updateData, alter)
       res.send(result)
     });
 
