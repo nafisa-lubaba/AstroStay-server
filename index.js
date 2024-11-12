@@ -164,6 +164,35 @@ async function run() {
       res.send(result)
     });
 
+    app.post('/review', async (req, res) => {
+      const newProduct = req.body;
+      console.log(newProduct);
+      const result = await reviewCollection.insertOne(newProduct)
+
+      res.send(result)
+    });
+
+    app.get('/review', async (req, res) => {
+      // const result = await reviewCollection.find().toArray()
+      const result = await reviewCollection.find().sort({ timestamp: -1 }).toArray();
+
+      res.send(result)
+    })
+
+    app.put('/updateData/:id', async (req, res) => {
+      const id = req.params.id;
+      const BookData = req.body
+      const query = { _id: new ObjectId(id) }
+      const options = { upsert: true }
+      const updateDoc = {
+        $set: {
+          ...BookData,
+        },
+      }
+      const result = await bookingCollection.updateOne(query, updateDoc, options)
+      res.send(result)
+    });
+
     
 
     // Connect the client to the server	(optional starting in v4.7)
