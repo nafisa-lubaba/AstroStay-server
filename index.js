@@ -67,7 +67,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
- 
+
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.nrsyrpr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -86,7 +86,7 @@ async function run() {
     const reviewCollection = client.db('roomDB').collection('review')
     const bookingCollection = client.db('roomDB').collection('booking')
     //jwt
-    
+
     // Clear token on logout
     app.get('/rooms', async (req, res) => {
       const minPrice = parseFloat(req.query.minPrice) || 0;
@@ -109,7 +109,7 @@ async function run() {
       const updateData = {
         $set: {
           availability: 'unAvailable',
-        
+
         }
       };
       const result = await roomsCollection.updateOne(filter, updateData);
@@ -117,8 +117,8 @@ async function run() {
       res.send(result)
 
     });
-     
-    
+
+
 
 
     app.get('/rooms/:id', async (req, res) => {
@@ -143,7 +143,7 @@ async function run() {
       const result = await bookingCollection.updateOne(query, updateDoc, options)
       res.send(result)
     })
-   
+
     app.post('/booking', async (req, res) => {
       const newProduct = req.body;
       console.log(newProduct);
@@ -175,11 +175,24 @@ async function run() {
     });
 
     // 
+    // app.get('/myBooking/:email', async (req, res) => {
+    //   console.log(req.params.email);
+    //   const result = await bookingCollection.find({ email: req.params.email }).toArray();
+    //   res.send(result)
+    // })
+
     app.get('/myBooking/:email', async (req, res) => {
-      console.log(req.params.email);
-      const result = await bookingCollection.find({ email: req.params.email }).toArray();
-      res.send(result)
-    })
+      try {
+        const email = req.params.email;
+        console.log('Fetching bookings for email:', email);
+
+        const result = await bookingCollection.find({ email }).toArray();
+        res.send(result);
+      } catch (error) {
+        console.error('Error fetching bookings:', error);
+        res.status(500).send({ message: 'Error fetching bookings' });
+      }
+    });
     app.get('/myBooking/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) }
@@ -223,21 +236,59 @@ async function run() {
       res.send(result)
     })
 
+    // app.put('/updateData/:id', async (req, res) => {
+    //   const id = req.params.id;
+    //   const BookData = req.body
+    //   const query = { _id: new ObjectId(id) }
+    //   const options = { upsert: true }
+    //   const updateDoc = {
+    //     $set: {
+    //       ...BookData,
+    //     },
+    //   }
+    //   const result = await bookingCollection.updateOne(query, updateDoc, options)
+    //   res.send(result)
+    // });
+
     app.put('/updateData/:id', async (req, res) => {
       const id = req.params.id;
-      const BookData = req.body
-      const query = { _id: new ObjectId(id) }
-      const options = { upsert: true }
-      const updateDoc = {
-        $set: {
-          ...BookData,
-        },
+      const BookData = req.body;
+  
+      console.log('Updating booking with ID:', id);
+      console.log('Received data for update:', BookData);
+  
+      // Ensure deadline is a valid date format
+      if (BookData.deadline) {
+          BookData.deadline = new Date(BookData.deadline);
       }
-      const result = await bookingCollection.updateOne(query, updateDoc, options)
-      res.send(result)
-    });
+  
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: false };
+      const updateDoc = {
+          $set: { ...BookData },
+      };
+  
+      try {
+          const result = await bookingCollection.updateOne(query, updateDoc, options);
+          console.log('Update result:', result);
+  
+          // Send structured response to the client for easy debugging
+          res.send({
+              success: result.modifiedCount > 0,
+              modifiedCount: result.modifiedCount,
+              message: result.modifiedCount > 0 ? 'Booking updated successfully' : 'No booking was updated',
+              result,
+          });
+      } catch (error) {
+          console.error('Error updating booking:', error);
+          res.status(500).send({ success: false, message: 'Error updating booking', error });
+      }
+  });
 
-    
+
+
+
+
 
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
