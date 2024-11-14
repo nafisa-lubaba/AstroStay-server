@@ -184,7 +184,7 @@ async function run() {
     app.get('/myBooking/:email', async (req, res) => {
       try {
         const email = req.params.email;
-        console.log('Fetching bookings for email:', email);
+        // console.log('Fetching bookings for email:', email);
 
         const result = await bookingCollection.find({ email }).toArray();
         res.send(result);
@@ -253,44 +253,30 @@ async function run() {
     app.put('/updateData/:id', async (req, res) => {
       const id = req.params.id;
       const BookData = req.body;
-  
-      console.log('Updating booking with ID:', id);
-      console.log('Received data for update:', BookData);
-  
+
+      // console.log('Updating booking with ID:', id);
+      // console.log('Received data for update:', BookData);
+
       // Ensure deadline is a valid date format
       // if (BookData.deadline) {
       //     BookData.deadline = new Date(BookData.deadline);
       // }
-  
+
       const query = { _id: new ObjectId(id) };
+      // console.log(query)
       const options = { upsert: true };
+      // console.log(options)
       const updateDoc = {
         $set: {
           ...BookData,
         },
       }
       const result = await bookingCollection.updateOne(query, updateDoc, options)
-      res.send(result)
-      // const updateDoc = {
-      //     $set: { ...BookData },
-      // };
-  
-      // try {
-      //     const result = await bookingCollection.updateOne(query, updateDoc, options);
-      //     console.log('Update result:', result);
-  
-      //     // Send structured response to the client for easy debugging
-      //     res.send({
-      //         success: result.modifiedCount > 0,
-      //         modifiedCount: result.modifiedCount,
-      //         message: result.modifiedCount > 0 ? 'Booking updated successfully' : 'No booking was updated',
-      //         result,
-      //     });
-      // } catch (error) {
-      //     console.error('Error updating booking:', error);
-      //     res.status(500).send({ success: false, message: 'Error updating booking', error });
-      // }
-  });
+      console.log(result)
+      res.send(result) 
+
+      
+    });
 
 
 
