@@ -258,31 +258,38 @@ async function run() {
       console.log('Received data for update:', BookData);
   
       // Ensure deadline is a valid date format
-      if (BookData.deadline) {
-          BookData.deadline = new Date(BookData.deadline);
-      }
+      // if (BookData.deadline) {
+      //     BookData.deadline = new Date(BookData.deadline);
+      // }
   
       const query = { _id: new ObjectId(id) };
-      const options = { upsert: false };
+      const options = { upsert: true };
       const updateDoc = {
-          $set: { ...BookData },
-      };
-  
-      try {
-          const result = await bookingCollection.updateOne(query, updateDoc, options);
-          console.log('Update result:', result);
-  
-          // Send structured response to the client for easy debugging
-          res.send({
-              success: result.modifiedCount > 0,
-              modifiedCount: result.modifiedCount,
-              message: result.modifiedCount > 0 ? 'Booking updated successfully' : 'No booking was updated',
-              result,
-          });
-      } catch (error) {
-          console.error('Error updating booking:', error);
-          res.status(500).send({ success: false, message: 'Error updating booking', error });
+        $set: {
+          ...BookData,
+        },
       }
+      const result = await bookingCollection.updateOne(query, updateDoc, options)
+      res.send(result)
+      // const updateDoc = {
+      //     $set: { ...BookData },
+      // };
+  
+      // try {
+      //     const result = await bookingCollection.updateOne(query, updateDoc, options);
+      //     console.log('Update result:', result);
+  
+      //     // Send structured response to the client for easy debugging
+      //     res.send({
+      //         success: result.modifiedCount > 0,
+      //         modifiedCount: result.modifiedCount,
+      //         message: result.modifiedCount > 0 ? 'Booking updated successfully' : 'No booking was updated',
+      //         result,
+      //     });
+      // } catch (error) {
+      //     console.error('Error updating booking:', error);
+      //     res.status(500).send({ success: false, message: 'Error updating booking', error });
+      // }
   });
 
 
