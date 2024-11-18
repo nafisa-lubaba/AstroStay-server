@@ -174,12 +174,7 @@ async function run() {
       }
     });
 
-    // 
-    // app.get('/myBooking/:email', async (req, res) => {
-    //   console.log(req.params.email);
-    //   const result = await bookingCollection.find({ email: req.params.email }).toArray();
-    //   res.send(result)
-    // })
+   
 
     app.get('/myBooking/:email', async (req, res) => {
       try {
@@ -236,31 +231,13 @@ async function run() {
       res.send(result)
     })
 
-    // app.put('/updateData/:id', async (req, res) => {
-    //   const id = req.params.id;
-    //   const BookData = req.body
-    //   const query = { _id: new ObjectId(id) }
-    //   const options = { upsert: true }
-    //   const updateDoc = {
-    //     $set: {
-    //       ...BookData,
-    //     },
-    //   }
-    //   const result = await bookingCollection.updateOne(query, updateDoc, options)
-    //   res.send(result)
-    // });
+    
 
     app.put('/updateData/:id', async (req, res) => {
       const id = req.params.id;
       const BookData = req.body;
 
-      // console.log('Updating booking with ID:', id);
-      // console.log('Received data for update:', BookData);
-
-      // Ensure deadline is a valid date format
-      // if (BookData.deadline) {
-      //     BookData.deadline = new Date(BookData.deadline);
-      // }
+     
 
       const query = { _id: new ObjectId(id) };
       // console.log(query)
