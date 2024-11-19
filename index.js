@@ -59,7 +59,7 @@ const corsOptions = {
     'http://localhost:5173',
     'http://localhost:5174',
      'http://localhost:5175',
-     'https://astrostay-server-production.up.railway.app',
+     'https://astrostay1.netlify.app',
 
   ],
   credentials: true,
